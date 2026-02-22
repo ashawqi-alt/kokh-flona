@@ -1,74 +1,98 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>كوخ فلونه</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>كوخ فلونه — المنتجات</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <header class="site-header">
-  <div class="wrap">
-    <h1>كوخ فلونه</h1>
-    <button id="contactBtn" class="btn-primary">تواصل معنا</button>
+  <div class="container header-inner">
+    <h1 class="brand">كوخ فلونه</h1>
+    <button id="contactBtn" class="btn btn-primary">تواصل معنا</button>
   </div>
 </header>
 
-<main class="wrap">
-  <section id="products" class="grid"></section>
+<main class="container">
+  <section id="productsGrid" class="grid"></section>
 </main>
 
-<footer class="wrap footer">
-  © كوخ فلونه
-</footer>
+<!-- Contact modal -->
+<div id="contactModal" class="modal" aria-hidden="true">
+  <div class="modal-content">
+    <button class="modal-close" id="closeModal">&times;</button>
+    <h2>تواصل معنا</h2>
+    <p>اختر طريقة التواصل:</p>
+    <div id="contactMethods">
+      <!-- will populate by script -->
+    </div>
+    <p>أو أرسل لنا رسالة على البريد: <span id="emailText"></span></p>
+  </div>
+</div>
 
 <script>
-const productContainer = document.getElementById('products');
-const ids = Array.from({length:16}, (_,i) => 'K'+(i+1)); // K1..K16
+/* ==== CONFIG: غيّر هنا الرقم والبريد اذا تريد ==== */
+const CONTACT = {
+  whatsapp: "966552240108", // بدون علامة +
+  email: "kokhflona@gmail.com"
+};
+/* ================================================== */
 
-async function loadProduct(id){
-  try{
-    const res = await fetch('/products/'+id+'.json');
-    if(!res.ok) return null;
-    return await res.json();
-  }catch(e){
-    return null;
+document.getElementById('emailText').textContent = CONTACT.email;
+
+const contactMethodsEl = document.getElementById('contactMethods');
+contactMethodsEl.innerHTML = `
+  <a class="btn btn-whatsapp" href="https://wa.me/${CONTACT.whatsapp}" target="_blank" rel="noopener">واتساب</a>
+  <a class="btn btn-email" href="mailto:${CONTACT.email}">إرسال عبر الإيميل</a>
+`;
+
+/* Modal open/close */
+const modal = document.getElementById('contactModal');
+const contactBtn = document.getElementById('contactBtn');
+const closeModal = document.getElementById('closeModal');
+contactBtn.addEventListener('click', ()=> modal.style.display='block');
+closeModal.addEventListener('click', ()=> modal.style.display='none');
+window.addEventListener('click', (e)=> { if(e.target===modal) modal.style.display='none'; });
+
+/* Load products list from /products folder */
+async function loadProducts(){
+  // هنا نفترض أن ملفات المنتجات موجودة في /products/*.json
+  // سنحاول تحميل ملف index للائحة أو نفحص أسماء K1..K16 تلقائياً
+  const list = [];
+  // generate product ids K1..K16 (لو تعدل عدد المنتجات غيّر هنا)
+  for(let i=1;i<=16;i++){
+    list.push('K'+i);
   }
-}
 
-function renderCard(p,id){
-  const div = document.createElement('article');
-  div.className = 'card';
-  const img = p.image ? `<img src="${p.image}" alt="${p.title}">` : `<div class="placeholder"></div>`;
-  div.innerHTML = `
-    ${img}
-    <div class="card-body">
-      <div class="tag">${id}</div>
-      <h3 class="title">${p.title||''}</h3>
-      <p class="meta">المقاسات: ${p.length||'-'} × ${p.width||'-'} × ${p.height||'-'} سم • المساحة: ${ (p.length&&p.width) ? ((p.length/100)*(p.width/100)).toFixed(2)+' م²' : '-'}</p>
-      <div class="price">${p.price ? p.price + ' ر.س' : 'سعر حسب الطلب'}</div>
-      <div class="actions">
-        <a class="btn" href="mailto:kokhflona@gmail.com?subject=طلب%20${encodeURIComponent(p.title||id)}">طلب عبر الإيميل</a>
-        <a class="btn" href="https://wa.me/966552240108?text=أود%20طلب%20${encodeURIComponent(p.title||id)}" target="_blank">واتساب</a>
-      </div>
-    </div>
-  `;
-  return div;
-}
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
 
-(async function(){
-  for(const id of ids){
-    const p = await loadProduct(id);
-    if(p){
-      productContainer.appendChild(renderCard(p,id));
+  for (const id of list){
+    try {
+      const res = await fetch(`/products/${id}.json`);
+      if(!res.ok) continue;
+      const p = await res.json();
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <a class="card-link" href="product.html?id=${encodeURIComponent(id)}">
+          <div class="thumb">
+            <img src="${p.image || '/images/uploads/placeholder.png'}" alt="${p.name}">
+          </div>
+          <div class="card-body">
+            <h3 class="product-title">${p.name}</h3>
+          </div>
+        </a>
+      `;
+      grid.appendChild(card);
+    } catch(e){
+      console.warn('missing', id, e);
     }
   }
-})();
+}
 
-// contact button scroll to top + open mail
-document.getElementById('contactBtn').addEventListener('click', ()=>{
-  window.location.href = 'mailto:kokhflona@gmail.com?subject=طلب%20من%20الموقع';
-});
+loadProducts();
 </script>
 </body>
 </html>

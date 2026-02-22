@@ -1,0 +1,25 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+locale: "ar"
+
+collections:
+  - name: "products"
+    label: "المنتجات"
+    folder: "products"
+    create: true
+    slug: "{{id}}"
+    identifier_field: "id"
+    fields:
+      - { label: "الرمز (ID)", name: "id", widget: "string" }
+      - { label: "الاسم", name: "name", widget: "string" }
+      - { label: "الوصف القصير", name: "note", widget: "text", required: false }
+      - { label: "الطول سم", name: "length", widget: "number" }
+      - { label: "العرض سم", name: "width", widget: "number" }
+      - { label: "الارتفاع سم", name: "height", widget: "number" }
+      - { label: "السعر (ريال)", name: "price", widget: "number" }
+      - { label: "صورة المنتج", name: "image", widget: "image", required: false }

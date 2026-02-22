@@ -1,86 +1,10 @@
-```html
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>كوخ فلونه</title>
-
-<style>
-body{margin:0;font-family:tahoma;background:#f2f3f5}
-
-/* header */
-.topbar{
-background:linear-gradient(90deg,#1f5fbf,#2c7be5);
-color:#fff;text-align:center;padding:30px 15px;position:relative
-}
-
-.contact-btn{
-position:absolute;left:20px;top:20px;
-background:#25D366;color:#fff;padding:12px 22px;
-border-radius:10px;text-decoration:none;font-weight:bold;
-box-shadow:0 4px 12px rgba(0,0,0,.25)
-}
-
-.products{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-gap:25px;padding:35px
-}
-
-.card{
-background:#fff;border-radius:14px;padding:18px;text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-cursor:pointer;transition:.2s
-}
-
-.card:hover{transform:translateY(-4px)}
-
-.img{height:160px;background:#e6e6e6;border-radius:10px;margin-bottom:15px}
-
-.price{display:block;margin-top:10px;font-weight:bold;color:#1f5fbf;font-size:18px}
-</style>
-
-<script>
-function order(product){
-let msg = "السلام عليكم، أريد طلب " + product;
-window.open("https://wa.me/966552240108?text=" + encodeURIComponent(msg));
-}
-</script>
-
-</head>
-<body>
-
-<header class="topbar">
-<h1>كوخ فلونه</h1>
-<p>بيوت خشبية للأطفال والحيوانات</p>
-<a href="https://wa.me/966552240108" class="contact-btn">تواصل معنا</a>
-</header>
-
-<section class="products">
-
-<div class="card" onclick="order('بيت K1 مقاس 56×45×48')"><div class="img"></div><h3>K1</h3><p>56 × 45 × 48 سم</p><span class="price">950 ريال</span></div>
-<div class="card" onclick="order('بيت K2 مقاس 69×66×68')"><div class="img"></div><h3>K2</h3><p>69 × 66 × 68 سم</p><span class="price">950 ريال</span></div>
-<div class="card" onclick="order('بيت K3 مقاس 88×77×81')"><div class="img"></div><h3>K3</h3><p>88 × 77 × 81 سم</p><span class="price">950 ريال</span></div>
-<div class="card" onclick="order('بيت K4 مقاس 99×92×95')"><div class="img"></div><h3>K4</h3><p>99 × 92 × 95 سم</p><span class="price">950 ريال</span></div>
-
-<div class="card" onclick="order('بيت K5 مقاس 124×100×116')"><div class="img"></div><h3>K5</h3><p>124 × 100 × 116 سم</p><span class="price">1200 ريال</span></div>
-<div class="card" onclick="order('بيت K6 مقاس 145×115×130')"><div class="img"></div><h3>K6</h3><p>145 × 115 × 130 سم</p><span class="price">1600 ريال</span></div>
-<div class="card" onclick="order('بيت K7 مقاس 140×130×160')"><div class="img"></div><h3>K7</h3><p>140 × 130 × 160 سم</p><span class="price">1800 ريال</span></div>
-<div class="card" onclick="order('بيت K8 مقاس 165×130×145')"><div class="img"></div><h3>K8</h3><p>165 × 130 × 145 سم</p><span class="price">2100 ريال</span></div>
-
-<div class="card" onclick="order('بيت K9 مقاس 160×140×170')"><div class="img"></div><h3>K9</h3><p>160 × 140 × 170 سم</p><span class="price">2200 ريال</span></div>
-<div class="card" onclick="order('بيت K10 مقاس 190×150×165')"><div class="img"></div><h3>K10</h3><p>190 × 150 × 165 سم</p><span class="price">2800 ريال</span></div>
-<div class="card" onclick="order('بيت K11 مقاس 180×160×185')"><div class="img"></div><h3>K11</h3><p>180 × 160 × 185 سم</p><span class="price">2800 ريال</span></div>
-<div class="card" onclick="order('بيت K12 مقاس 205×185×200')"><div class="img"></div><h3>K12</h3><p>205 × 185 × 200 سم</p><span class="price">3600 ريال</span></div>
-
-<div class="card" onclick="order('بيت K13 مقاس 230×210×215')"><div class="img"></div><h3>K13</h3><p>230 × 210 × 215 سم</p><span class="price">4600 ريال</span></div>
-<div class="card" onclick="order('بيت K14 مقاس 260×240×230')"><div class="img"></div><h3>K14</h3><p>260 × 240 × 230 سم</p><span class="price">6000 ريال</span></div>
-<div class="card" onclick="order('بيت K15 مقاس 300×270×250')"><div class="img"></div><h3>K15</h3><p>300 × 270 × 250 سم</p><span class="price">7700 ريال</span></div>
-<div class="card" onclick="order('بيت K16 مقاس 350×300×270')"><div class="img"></div><h3>K16</h3><p>350 × 300 × 270 سم</p><span class="price">10000 ريال</span></div>
-
-</section>
-
-</body>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Admin — كوخ فلونه</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
+  </body>
 </html>
-```

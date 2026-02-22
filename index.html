@@ -1,10 +1,74 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Admin — كوخ فلونه</title>
-  </head>
-  <body>
-    <script src="https://unpkg.com/netlify-cms@^2.0.0/dist/netlify-cms.js"></script>
-  </body>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>كوخ فلونه</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <h1>كوخ فلونه</h1>
+    <button id="contactBtn" class="btn-primary">تواصل معنا</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="products" class="grid"></section>
+</main>
+
+<footer class="wrap footer">
+  © كوخ فلونه
+</footer>
+
+<script>
+const productContainer = document.getElementById('products');
+const ids = Array.from({length:16}, (_,i) => 'K'+(i+1)); // K1..K16
+
+async function loadProduct(id){
+  try{
+    const res = await fetch('/products/'+id+'.json');
+    if(!res.ok) return null;
+    return await res.json();
+  }catch(e){
+    return null;
+  }
+}
+
+function renderCard(p,id){
+  const div = document.createElement('article');
+  div.className = 'card';
+  const img = p.image ? `<img src="${p.image}" alt="${p.title}">` : `<div class="placeholder"></div>`;
+  div.innerHTML = `
+    ${img}
+    <div class="card-body">
+      <div class="tag">${id}</div>
+      <h3 class="title">${p.title||''}</h3>
+      <p class="meta">المقاسات: ${p.length||'-'} × ${p.width||'-'} × ${p.height||'-'} سم • المساحة: ${ (p.length&&p.width) ? ((p.length/100)*(p.width/100)).toFixed(2)+' م²' : '-'}</p>
+      <div class="price">${p.price ? p.price + ' ر.س' : 'سعر حسب الطلب'}</div>
+      <div class="actions">
+        <a class="btn" href="mailto:kokhflona@gmail.com?subject=طلب%20${encodeURIComponent(p.title||id)}">طلب عبر الإيميل</a>
+        <a class="btn" href="https://wa.me/966552240108?text=أود%20طلب%20${encodeURIComponent(p.title||id)}" target="_blank">واتساب</a>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+(async function(){
+  for(const id of ids){
+    const p = await loadProduct(id);
+    if(p){
+      productContainer.appendChild(renderCard(p,id));
+    }
+  }
+})();
+
+// contact button scroll to top + open mail
+document.getElementById('contactBtn').addEventListener('click', ()=>{
+  window.location.href = 'mailto:kokhflona@gmail.com?subject=طلب%20من%20الموقع';
+});
+</script>
+</body>
 </html>

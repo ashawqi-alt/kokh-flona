@@ -1,1 +1,21 @@
-.placeholder{display:none}
+
+:root{--blue:#0d6efd;--bg:#f6f7fb;--card:#fff;--muted:#6b7280}
+*{box-sizing:border-box;font-family: system-ui, 'Segoe UI', Roboto, 'Noto Naskh Arabic', Arial;}
+body{margin:0;background:var(--bg);color:#111}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.site-header{background:linear-gradient(90deg,#0b63d6,#0ba3ff);color:#fff;padding:18px 0;margin-bottom:20px}
+.site-header h1{margin:0;display:inline-block}
+.btn-primary{background:#fff;color:#0b63d6;border:0;padding:8px 12px;border-radius:6px;cursor:pointer;float:left}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+.card{background:var(--card);border-radius:10px;padding:0;box-shadow:0 6px 18px rgba(17,24,39,.06);overflow:hidden;direction:rtl}
+.card img{width:100%;height:160px;object-fit:cover;display:block;background:#eee}
+.placeholder{height:160px;background:linear-gradient(90deg,#e9ecef,#f6f7fb);display:block}
+.card-body{padding:14px}
+.tag{display:inline-block;background:#e6f4ff;color:#0369a1;padding:4px 8px;border-radius:6px;font-size:12px;margin-bottom:8px}
+.title{margin:4px 0 8px;font-size:18px}
+.meta{color:var(--muted);font-size:13px;margin:0 0 10px}
+.price{font-weight:700;color:#111;margin-bottom:10px}
+.actions{display:flex;gap:8px}
+.actions .btn{background:#0b63d6;color:#fff;padding:8px 10px;border-radius:8px;text-decoration:none}
+.actions .btn:nth-child(2){background:#25d366} /* whatsapp */
+.footer{padding:20px;text-align:center;color:var(--muted);margin-top:30px}

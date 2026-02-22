@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title id="metaTitle">كوخ فلونه — بيوت خشبية للأطفال</title>
+  <meta name="description" id="metaDesc" content="بيوت خشبية للأطفال — عرض المنتجات والتواصل عبر واتساب أو البريد">
+  <style>
+    :root{--accent:#0b73ff;--card:#fff;--muted:#666}
+    body{font-family:Tahoma,Arial;direction:rtl;background:#f4f6fb;margin:0;color:#111}
+    header{background:linear-gradient(90deg,#062a78 0%, #0b73ff 100%);color:#fff;padding:18px}
+    .container{max-width:1100px;margin:20px auto;padding:0 16px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+    .card{background:var(--card);border-radius:10px;padding:12px;box-shadow:0 6px 18px rgba(10,20,40,0.06);overflow:hidden}
+    .thumb{height:180px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .thumb img{width:100%;height:100%;object-fit:cover}
+    h1{margin:0;font-size:20px}
+    h3{margin:10px 0 6px;font-size:18px}
+    .meta{font-size:13px;color:var(--muted);margin-bottom:8px}
+    .price{font-weight:700;color:#111}
+    .btn{display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;color:#fff;background:var(--accent);margin:6px 6px 0;cursor:pointer}
+    .btn.secondary{background:#333}
+    footer{padding:28px;text-align:center;color:var(--muted)}
+    .admin-bar{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-bottom:12px}
+    .small{font-size:13px;color:#444}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:40}
+    .modal.show{display:flex}
+    .panel{background:#fff;padding:18px;border-radius:10px;max-width:920px;width:100%;max-height:90vh;overflow:auto}
+    label{display:block;margin-top:8px;font-size:13px;color:#333}
+    input,textarea,select{width:100%;padding:8px;border-radius:6px;border:1px solid #ddd;margin-top:6px;font-size:14px}
+    .row{display:flex;gap:8px}
+    .row > *{flex:1}
+    .tag{display:inline-block;background:#eef3ff;color:#064; padding:4px 8px;border-radius:6px;font-size:12px;margin-left:6px}
+    .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .settings{font-size:13px;color:#fff;opacity:0.95}
+    .input-inline{display:flex;gap:8px}
+    .input-inline input{flex:1}
+    @media(max-width:480px){ .row{flex-direction:column} .thumb{height:150px} header{padding:12px} .topbar{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container topbar">
+    <div>
+      <h1 id="siteTitle">كوخ فلونه</h1>
+      <div id="siteTag" class="settings">بيوت خشبية للأطفال والحيوانات — اطلب عبر واتساب أو الإيميل</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="adminBtn" class="btn secondary">وضع الإدارة</button>
+      <button id="openSettings" class="btn">إعدادات الموقع</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="admin-bar" id="adminBar" style="display:none">
+    <div class="small">الوضع الإداري مفعل</div>
+    <button id="addProductBtn" class="btn">أضف منتج</button>
+    <button id="importBtn" class="btn secondary">استيراد JSON</button>
+    <button id="exportBtn" class="btn">حفظ JSON</button>
+    <button id="closeAdmin" class="btn secondary">خروج</button>
+  </div>
+
+  <section id="productsGrid" class="grid"></section>
+</main>
+
+<footer>
+  <div class="container">
+    <div id="contactLine">للطلب: <span id="whText"></span> • <a id="mailLink" href="#">أرسل لنا إيميل</a></div>
+    <div style="margin-top:8px">© جميع الحقوق محفوظة — كوخ فلونه</div>
+  </div>
+</footer>
+
+<!-- Product Modal / Admin -->
+<div id="modal" class="modal" role="dialog" aria-hidden="true">
+  <div class="panel" role="document">
+    <h3 id="modalTitle">أضف/حرر منتج</h3>
+    <div>
+      <label>الرمز (ID)</label><input id="p_id" />
+      <label>الاسم</label><input id="p_name" />
+      <div class="row">
+        <div><label>الطول سم</label><input id="p_length" type="number" /></div>
+        <div><label>العرض سم</label><input id="p_width" type="number" /></div>
+        <div><label>الارتفاع سم</label><input id="p_height" type="number" /></div>
+      </div>
+      <label>السعر (ريال)</label><input id="p_price" type="number" />
+      <label>رابط الصورة (URL)</label><input id="p_image" />
+      <label>ملاحظات قصيرة</label><textarea id="p_note" rows="2"></textarea>
+
+      <div class="actions">
+        <button id="saveProduct" class="btn">حفظ</button>
+        <button id="delProduct" class="btn secondary">حذف</button>
+        <button id="cancelProduct" class="btn" style="background:#999">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal" role="dialog" aria-hidden="true">
+  <div class="panel" role="document">
+    <h3>إعدادات الموقع</h3>
+    <label>عنوان الموقع</label><input id="s_title" />
+    <label>الوصف المختصر (meta description)</label><input id="s_desc" />
+    <div class="row">
+      <div><label>رقم واتساب (دولية بدون +)</label><input id="s_wh" /></div>
+      <div><label>البريد الإلكتروني</label><input id="s_mail" /></div>
+    </div>
+    <label>كلمة مرور الإدارة الحالية</label><input id="s_admin_old" placeholder="أدخل كلمة المرور الحالية" />
+    <label>تعيين كلمة مرور إدارية جديدة</label><input id="s_admin_new" placeholder="أدخل كلمة مرور جديدة" />
+    <div style="margin-top:8px;color:#555;font-size:13px">ملاحظة: كلمة المرور محفوظة على متصفحك (localStorage). احتفظ بها آمنًا.</div>
+
+    <div class="actions">
+      <button id="saveSettings" class="btn">حفظ الإعدادات</button>
+      <button id="cancelSettings" class="btn secondary">إلغاء</button>
+    </div>
+    <hr/>
+    <label>استيراد ملف JSON للمنتجات</label><input id="fileInput" type="file" accept=".json" />
+    <div style="margin-top:8px;color:#444">تنسيق JSON يجب أن يكون مصفوفة من الكائنات: [{id,name,length,width,height,price,image,note}, ...]</div>
+  </div>
+</div>
+
+<script>
+/* ====== Default data and settings ====== */
+const DEFAULT_PRODUCTS = [
+  { id:"K1", name:"بيت خشبي K1", length:56, width:45, height:48, price:950, image:"https://via.placeholder.com/600x400?text=K1", note:"مقاس صغير" },
+  { id:"K2", name:"بيت خشبي K2", length:69, width:66, height:68, price:950, image:"https://via.placeholder.com/600x400?text=K2", note:"" },
+  { id:"K3", name:"بيت خشبي K3", length:88, width:77, height:81, price:950, image:"https://via.placeholder.com/600x400?text=K3", note:"" },
+  { id:"K4", name:"بيت خشبي K4", length:99, width:92, height:95, price:950, image:"https://via.placeholder.com/600x400?text=K4", note:"" },
+  { id:"K5", name:"بيت خشبي K5", length:124, width:100, height:116, price:1200, image:"https://via.placeholder.com/600x400?text=K5", note:"شامل تغليف" },
+  { id:"K6", name:"بيت خشبي K6", length:145, width:115, height:130, price:1600, image:"https://via.placeholder.com/600x400?text=K6", note:"" },
+  { id:"K7", name:"بيت خشبي K7", length:140, width:130, height:160, price:1800, image:"https://via.placeholder.com/600x400?text=K7", note:"" },
+  { id:"K8", name:"بيت خشبي K8", length:165, width:130, height:145, price:2100, image:"https://via.placeholder.com/600x400?text=K8", note:"" },
+  { id:"K9", name:"بيت خشبي K9", length:160, width:140, height:170, price:2200, image:"https://via.placeholder.com/600x400?text=K9", note:"" },
+  { id:"K10", name:"بيت خشبي K10", length:190, width:150, height:165, price:2800, image:"https://via.placeholder.com/600x400?text=K10", note:"" },
+  { id:"K11", name:"بيت خشبي K11", length:180, width:160, height:185, price:2800, image:"https://via.placeholder.com/600x400?text=K11", note:"" },
+  { id:"K12", name:"بيت خشبي K12", length:205, width:185, height:200, price:3600, image:"https://via.placeholder.com/600x400?text=K12", note:"" },
+  { id:"K13", name:"بيت خشبي K13", length:230, width:210, height:215, price:4600, image:"https://via.placeholder.com/600x400?text=K13", note:"" },
+  { id:"K14", name:"بيت خشبي K14", length:260, width:240, height:230, price:6000, image:"https://via.placeholder.com/600x400?text=K14", note:"" },
+  { id:"K15", name:"بيت خشبي K15", length:300, width:270, height:250, price:7700, image:"https://via.placeholder.com/600x400?text=K15", note:"" },
+  { id:"K16", name:"بيت خشبي K16", length:350, width:300, height:270, price:10000, image:"https://via.placeholder.com/600x400?text=K16", note:"" }
+];
+
+const DEFAULT_SETTINGS = {
+  siteTitle: "كوخ فلونه",
+  siteDesc: "بيوت خشبية للأطفال والحيوانات — اطلب عبر الواتساب أو الإيميل",
+  whatsapp: "966552240108",
+  email: "kokhflona@gmail.com",
+  adminPass: "Admin@2026!"
+};
+
+/* ===== storage helpers ===== */
+function loadSettings(){
+  try{ const s = JSON.parse(localStorage.getItem('kh_settings')||'null'); return s?Object.assign({},DEFAULT_SETTINGS,s):DEFAULT_SETTINGS; }catch(e){return DEFAULT_SETTINGS;}
+}
+function saveSettings(s){ localStorage.setItem('kh_settings', JSON.stringify(s)); updateUIFromSettings(s); }
+
+function loadProducts(){
+  try{ const p = JSON.parse(localStorage.getItem('kh_products')||'null'); return p && Array.isArray(p) && p.length? p : DEFAULT_PRODUCTS.slice(); }catch(e){return DEFAULT_PRODUCTS.slice();}
+}
+function saveProducts(arr){ localStorage.setItem('kh_products', JSON.stringify(arr)); render(); }
+
+/* ===== utilities ===== */
+function areaM2(p){ return ((p.length * p.width)/10000).toFixed(2); }
+function format(n){ return Number(n).toLocaleString("ar-EG"); }
+function encodeText(t){ return encodeURIComponent(t); }
+
+/* ===== initial state ===== */
+let settings = loadSettings();
+let products = loadProducts();
+
+/* ===== render ===== */
+function updateUIFromSettings(s){
+  document.getElementById('siteTitle').innerText = s.siteTitle;
+  document.getElementById('siteTag').innerText = s.siteDesc;
+  document.getElementById('metaTitle').innerText = s.siteTitle;
+  document.getElementById('metaDesc').setAttribute('content', s.siteDesc);
+  document.getElementById('whText').innerText = "واتساب: " + formatPhone(s.whatsapp||s.whatsapp||s.whatsapp);
+  const mail = s.email || '';
+  document.getElementById('mailLink').innerText = mail?("إيميل: " + mail):"أرسل لنا إيميل";
+  document.getElementById('mailLink').href = "mailto:" + mail;
+}
+function formatPhone(p){
+  if(!p) return "";
+  // format basic: group country and rest
+  return "+" + p;
+}
+function render(){
+  const grid = document.getElementById('productsGrid'); grid.innerHTML='';
+  products.forEach(p=>{
+    const div = document.createElement('div'); div.className='card';
+    div.innerHTML = `
+      <div class="thumb"><img src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/600x400?text=No+Image'"></div>
+      <h3>${p.name} <span class="tag">${p.id}</span></h3>
+      <div class="meta">المقاسات: ${p.length} × ${p.width} × ${p.height} سم • المساحة: ${areaM2(p)} م²</div>
+      <div class="price">${format(p.price)} ريال</div>
+      <div style="margin-top:8px">
+        <a class="btn" href="${waLink(p)}" target="_blank">اطلب عبر واتساب</a>
+        <a class="btn secondary" href="${mailtoLink(p)}">اطلب عبر الإيميل</a>
+        <button class="btn" onclick="openShare('${p.id}')">مشاركة</button>
+        <button class="btn" style="background:#0a8" onclick="openEdit('${p.id}')">تعديل</button>
+      </div>
+      <div style="margin-top:8px;color:#666;font-size:13px">${p.note||''}</div>
+    `;
+    grid.appendChild(div);
+  });
+  updateUIFromSettings(settings);
+}
+
+/* ===== links ===== */
+function waLink(p){
+  const s = settings.whatsapp || DEFAULT_SETTINGS.whatsapp;
+  const text = `السلام عليكم\nأرغب بطلب المنتج: ${p.name} (رمز: ${p.id})\nالمقاسات: ${p.length}x${p.width}x${p.height} سم\nالسعر: ${p.price} ريال\nالكمية: `;
+  return `https://wa.me/${s}?text=${encodeText(text)}`;
+}
+function mailtoLink(p){
+  const mail = settings.email || DEFAULT_SETTINGS.email;
+  const subject = encodeText(`طلب منتج: ${p.name} (${p.id})`);
+  const body = encodeText(`السلام عليكم,\nأرغب بطلب المنتج ${p.name} (رمز ${p.id})\nالمقاسات: ${p.length}x${p.width}x${p.height} سم\nالسعر: ${p.price} ريال\nالكمية: `);
+  return `mailto:${mail}?subject=${subject}&body=${body}`;
+}
+function openShare(id){
+  const p = products.find(x=>x.id===id);
+  const url = location.href;
+  const shareText = encodeText(`${p.name} - ${p.price} ريال\n${url}`);
+  if(navigator.share){ navigator.share({title:p.name,text:decodeURIComponent(shareText),url:url}); }
+  else { prompt("انسخ الرابط للمشاركة:", `${p.name} - ${p.price} ريال\n${url}`); }
+}
+
+/* ===== admin modal actions ===== */
+let editingId = null;
+const modal = document.getElementById('modal');
+function openEdit(id){
+  editingId = id;
+  const p = products.find(x=>x.id===id) || {};
+  document.getElementById('modalTitle').innerText = p.id ? 'تعديل المنتج' : 'أضف منتج';
+  document.getElementById('p_id').value = p.id || '';
+  document.getElementById('p_name').value = p.name || '';
+  document.getElementById('p_length').value = p.length || '';
+  document.getElementById('p_width').value = p.width || '';
+  document.getElementById('p_height').value = p.height || '';
+  document.getElementById('p_price').value = p.price || '';
+  document.getElementById('p_image').value = p.image || '';
+  document.getElementById('p_note').value = p.note || '';
+  document.getElementById('delProduct').style.display = p.id ? 'inline-block' : 'none';
+  modal.classList.add('show');
+}
+function closeModal(){ modal.classList.remove('show'); editingId=null; }
+
+document.getElementById('cancelProduct').onclick = closeModal;
+document.getElementById('delProduct').onclick = function(){
+  if(!editingId) return;
+  if(!confirm('تأكيد حذف المنتج؟')) return;
+  products = products.filter(x=>x.id!==editingId);
+  saveProducts(products);
+  closeModal(); render();
+};
+document.getElementById('saveProduct').onclick = function(){
+  const obj = {
+    id: document.getElementById('p_id').value.trim() || ('P'+Math.random().toString(36).slice(2,7)).toUpperCase(),
+    name: document.getElementById('p_name').value.trim(),
+    length: Number(document.getElementById('p_length').value)||0,
+    width: Number(document.getElementById('p_width').value)||0,
+    height: Number(document.getElementById('p_height').value)||0,
+    price: Number(document.getElementById('p_price').value)||0,
+    image: document.getElementById('p_image').value.trim() || 'https://via.placeholder.com/600x400?text=No+Image',
+    note: document.getElementById('p_note').value.trim()
+  };
+  const exists = products.findIndex(x=>x.id===editingId);
+  if(exists>=0) products[exists]=obj; else products.unshift(obj);
+  saveProducts(products);
+  closeModal(); render();
+};
+
+/* ===== admin mode toggle and settings modal ===== */
+const adminBtn = document.getElementById('adminBtn'), adminBar = document.getElementById('adminBar'), addBtn = document.getElementById('addProductBtn'), exportBtn = document.getElementById('exportBtn'), closeAdmin = document.getElementById('closeAdmin'), importBtn = document.getElementById('importBtn'), settingsModal = document.getElementById('settingsModal');
+let ADMIN_PASSWORD = settings.adminPass || DEFAULT_SETTINGS.adminPass;
+
+adminBtn.onclick = function(){
+  const pass = prompt('ادخل كلمة الإدارة');
+  if(pass===ADMIN_PASSWORD){ adminBar.style.display='flex'; adminBtn.style.display='none'; alert('وضع الإدارة مفعل'); }
+  else alert('كلمة خاطئة');
+};
+closeAdmin.onclick = function(){ adminBar.style.display='none'; adminBtn.style.display='inline-block'; };
+
+/* add / export / import */
+addBtn.onclick = function(){ editingId = null; openEdit(null); };
+exportBtn.onclick = function(){
+  const blob = new Blob([JSON.stringify(products, null, 2)], {type:'application/json;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'products.json'; a.click();
+};
+importBtn.onclick = function(){ document.getElementById('fileInput').click(); };
+
+/* settings modal actions */
+document.getElementById('openSettings').onclick = function(){
+  // populate
+  document.getElementById('s_title').value = settings.siteTitle;
+  document.getElementById('s_desc').value = settings.siteDesc;
+  document.getElementById('s_wh').value = settings.whatsapp;
+  document.getElementById('s_mail').value = settings.email;
+  document.getElementById('s_admin_old').value = '';
+  document.getElementById('s_admin_new').value = '';
+  settingsModal.classList.add('show');
+};
+document.getElementById('cancelSettings').onclick = function(){ settingsModal.classList.remove('show'); };
+document.getElementById('saveSettings').onclick = function(){
+  const old = document.getElementById('s_admin_old').value;
+  const nw = document.getElementById('s_admin_new').value;
+  if(old && old !== ADMIN_PASSWORD){ alert('كلمة المرور الحالية غير صحيحة'); return; }
+  if(nw){ ADMIN_PASSWORD = nw; settings.adminPass = nw; }
+  settings.siteTitle = document.getElementById('s_title').value || settings.siteTitle;
+  settings.siteDesc = document.getElementById('s_desc').value || settings.siteDesc;
+  settings.whatsapp = document.getElementById('s_wh').value || settings.whatsapp;
+  settings.email = document.getElementById('s_mail').value || settings.email;
+  saveSettings(settings);
+  settingsModal.classList.remove('show');
+  alert('تم حفظ الإعدادات');
+};
+
+/* file input import */
+document.getElementById('fileInput').onchange = function(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = function(){ try{ const arr = JSON.parse(r.result); if(!Array.isArray(arr)){ alert('ملف JSON غير صالح'); return; } products = arr; saveProducts(products); alert('تم استيراد المنتجات'); }catch(err){ alert('خطأ بقراءة الملف'); } };
+  r.readAsText(f);
+};
+
+/* save to localStorage on unload periodically */
+function saveAll(){
+  saveSettings(settings);
+  saveProducts(products);
+}
+window.addEventListener('beforeunload', saveAll);
+
+/* init render */
+updateUIFromSettings(settings);
+render();
+</script>
+
+</body>
+</html>
